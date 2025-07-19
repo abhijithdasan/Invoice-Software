@@ -87,81 +87,171 @@ const StJohnsInvoiceSystem = () => {
   };
 
   const printInvoice = () => {
+  try {
+    // Check if printRef exists and has content
+    if (!printRef.current) {
+      console.error('Print reference not found');
+      return;
+    }
+
     const printWindow = window.open('', '_blank');
+    
+    // Check if window opened successfully (could be blocked by popup blocker)
+    if (!printWindow) {
+      alert('Please allow popups for this site to enable printing');
+      return;
+    }
+
     const invoiceHTML = printRef.current.innerHTML;
-    
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Invoice - ${invoiceData.invoiceNo}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-            .invoice { max-width: 800px; margin: 0 auto; }
-            .header { 
-              background: linear-gradient(135deg, #1e3a8a, #3b82f6); 
-              color: white; 
-              padding: 30px; 
-              text-align: center; 
-              border-radius: 10px; 
-              margin-bottom: 30px; 
+
+    // Get all stylesheets from the current document
+    const stylesheets = Array.from(document.styleSheets);
+    let allStyles = '';
+
+    // Extract CSS rules from all stylesheets
+    stylesheets.forEach(stylesheet => {
+      try {
+        if (stylesheet.cssRules) {
+          Array.from(stylesheet.cssRules).forEach(rule => {
+            allStyles += rule.cssText + '\n';
+          });
+        }
+      } catch (e) {
+        // Handle CORS issues with external stylesheets
+        console.warn('Could not access stylesheet:', e);
+      }
+    });
+
+    // Also get inline styles from style tags
+    const styleTags = document.querySelectorAll('style');
+    styleTags.forEach(styleTag => {
+      allStyles += styleTag.innerHTML + '\n';
+    });
+
+    // Complete HTML document with copied styles
+    const printContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoice</title>
+        <style>
+          ${allStyles}
+          
+          /* Additional print-specific styles - html2pdf matching */
+          @media print {
+            @page {
+              size: A4;
+              margin: 0.5in;
             }
-            .header h1 { margin: 0; font-size: 2.5em; }
-            .header p { margin: 5px 0; opacity: 0.9; }
-            .details { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-            .section { background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; }
-            .section h3 { color: #1e40af; margin-bottom: 15px; }
-            .table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-            .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
-            .table th { background: #f3f4f6; font-weight: bold; color: #374151; }
-            .total { text-align: right; font-size: 1.2em; font-weight: bold; margin-bottom: 30px; }
-            .seal { 
-              position: relative; 
-              width: 150px; 
-              height: 150px; 
-              margin: 20px auto; 
+            
+            body {
+              margin: 0 !important;
+              padding: 10px !important;
+              font-family: inherit !important;
+              background: white !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
-            .seal-circle { 
-              width: 150px; 
-              height: 150px; 
-              border: 3px solid #059669; 
-              border-radius: 50%; 
-              display: flex; 
-              align-items: center; 
-              justify-content: center; 
-              background: linear-gradient(135deg, #ecfdf5, #d1fae5); 
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            
+            /* Remove any transforms or scaling */
+            * {
+              transform: none !important;
+              box-sizing: border-box !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
-            .seal-text { 
-              text-align: center; 
-              color: #059669; 
-              font-weight: bold; 
-              line-height: 1.2;
+            
+            /* Hide elements that shouldn't be printed */
+            .no-print, 
+            button,
+            .btn,
+            [type="button"],
+            [type="submit"],
+            input[type="button"],
+            input[type="submit"] {
+              display: none !important;
             }
-            .footer { 
-              text-align: center; 
-              color: #6b7280; 
-              margin-top: 30px; 
-              font-size: 0.9em;
+            
+            /* Preserve original fonts and sizes */
+            body, body * {
+              font-size: inherit !important;
+              line-height: inherit !important;
+              color: inherit !important;
+              background-color: inherit !important;
             }
-            @media print {
-              body { margin: 0; }
-              .no-print { display: none; }
+            
+            /* Ensure tables and content maintain structure */
+            table {
+              width: 100% !important;
+              border-collapse: collapse !important;
+              page-break-inside: auto !important;
             }
-          </style>
-        </head>
-        <body>
-          ${invoiceHTML}
-          <script>
-            window.onload = function() {
-              window.print();
+            
+            thead {
+              display: table-header-group !important;
             }
-          </script>
-        </body>
+            
+            tr {
+              page-break-inside: avoid !important;
+            }
+            
+            /* Maintain margins and padding as designed */
+            .invoice-header,
+            .invoice-body,
+            .invoice-footer {
+              margin: inherit !important;
+              padding: inherit !important;
+            }
+            
+            /* Preserve flex and grid layouts */
+            .flex, .d-flex {
+              display: flex !important;
+            }
+            
+            .grid {
+              display: grid !important;
+            }
+            
+            /* Keep images and logos */
+            img {
+              max-width: 100% !important;
+              height: auto !important;
+            }
+            
+            /* Auto-fit content to page */
+            html {
+              zoom: 0.9;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${invoiceHTML}
+      </body>
       </html>
-    `);
-    
+    `;
+
+    printWindow.document.write(printContent);
     printWindow.document.close();
-  };
+
+    // Wait for content to load before printing
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      
+      // Optional: Close the window after printing
+      printWindow.onafterprint = () => {
+        printWindow.close();
+      };
+    };
+
+  } catch (error) {
+    console.error('Error printing invoice:', error);
+    alert('An error occurred while trying to print the invoice');
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
