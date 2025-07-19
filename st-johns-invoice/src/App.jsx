@@ -1,14 +1,19 @@
-import React from 'react';
-import './index.css';
-import StJohnsInvoiceSystem from './components/StJohnsInvoiceSystem';
-import './App.css'; 
+import React, { useState } from 'react';
+import Login from './components/Login'; 
+import InvoicePage from './components/StJohnsInvoiceSystem';
 
-function App() {
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
-    <div>
-      <StJohnsInvoiceSystem />
-    </div>
+    <>
+      {isAuthenticated ? (
+        <InvoicePage />
+      ) : (
+        <Login onLogin={() => setIsAuthenticated(true)} />
+      )}
+    </>
   );
-}
+};
 
 export default App;
