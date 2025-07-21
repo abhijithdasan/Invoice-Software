@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Download, Printer, Plus, Trash2, User, Phone, IndianRupee, Calendar, FileText, CheckCircle, Building, Menu, X } from 'lucide-react';
-import Logo from '../images/logo.png';
+import Logo from '../Images/logo.png';
 const StJohnsInvoiceSystem = () => {
   const [invoiceData, setInvoiceData] = useState({
     studentName: '',
