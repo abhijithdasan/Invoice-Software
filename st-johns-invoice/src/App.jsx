@@ -7,11 +7,12 @@ const App = () => {
 
   return (
     <>
-      {isAuthenticated ? (
+    <InvoicePage />
+      {/* {isAuthenticated ? (
         <InvoicePage />
       ) : (
         <Login onLogin={() => setIsAuthenticated(true)} />
-      )}
+      )} */}
     </>
   );
 };

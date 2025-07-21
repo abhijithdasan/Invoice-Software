@@ -257,12 +257,12 @@ const StJohnsInvoiceSystem = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-4 sm:p-6 lg:p-8">
+        <div className="bg-white text-green-600 p-4 sm:p-6 lg:p-8">
           <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
             <Building className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">St. Johns Boys Hostel</h1>
           </div>
-          <p className="text-center text-blue-100 text-sm sm:text-base lg:text-lg">Professional Invoice Management System</p>
+          <p className="text-center text-black-100 text-sm sm:text-base lg:text-lg">Professional Invoice Management System</p>
         </div>
 
         {/* Mobile Tab Navigation */}
@@ -478,10 +478,10 @@ const StJohnsInvoiceSystem = () => {
             {/* Preview Card */}
             <div ref={printRef} className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg mb-4 sm:mb-6">
               <div className="text-center mb-4 sm:mb-6">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 sm:p-6 rounded-lg mb-4">
-                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold">St. Johns Boys Hostel</h3>
-                  <p className="text-blue-100 mt-1 sm:mt-2 text-sm sm:text-base">Bangalore, Karnataka</p>
-                  <p className="text-blue-100 text-xs sm:text-sm">Phone: +91 90743 70798 | Email: info@stjohnsHostel.com</p>
+                <div className="bg-white  p-4 sm:p-6 rounded-lg mb-4">
+                  <h3 className="text-lg text-green-600 sm:text-xl lg:text-2xl font-bold">St. Johns Boys Hostel</h3>
+                  <p className="text-black-100 mt-1 sm:mt-2 text-sm sm:text-base">Bangalore, Karnataka</p>
+                  <p className="text-black-100 text-xs sm:text-sm">Phone: +91 90743 70798 | Email: info@stjohnsHostel.com</p>
                 </div>
               </div>
 
@@ -539,18 +539,18 @@ const StJohnsInvoiceSystem = () => {
 
               {/* Verified Seal */}
               <div className="flex justify-center mt-6 sm:mt-8">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-green-500 rounded-full flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 shadow-lg">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-lg sm:text-2xl text-green-600 mb-1">✓</div>
-                    <div className="text-xs font-bold text-green-700">VERIFIED</div>
-                    <div className="text-xs font-semibold text-green-600">ST. JOHNS</div>
-                    <div className="text-xs text-green-600">BOYS HOSTEL</div>
+                    <div className="text-lg sm:text-2xl text-green-600 mb-1"></div>
+                    <div className="text-xs font-bold text-green-600">VERIFIED ✓</div>
+                    <div className="text-xs font-semibold text-green-800">ST. JOHNS</div>
+                    <div className="text-xs font-semibold text-green-800">BOYS HOSTEL</div>
                   </div>
                 </div>
               </div>
 
               <div className="text-center mt-6 sm:mt-8 text-gray-600 text-xs sm:text-sm">
-                <p>This is a computer-generated invoice and does not require a signature.</p>
+                <p>This is a computer-generated invoice.</p>
                 <p className="mt-1">Thank you for choosing St. Johns Boys Hostel!</p>
               </div>
             </div>
@@ -564,13 +564,13 @@ const StJohnsInvoiceSystem = () => {
                 <Download className="w-5 h-5 mr-2" />
                 Download PDF
               </button>
-              <button
+              {/* <button
                 onClick={printInvoice}
                 className="w-full sm:flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all shadow-lg flex items-center justify-center text-base"
               >
                 <Printer className="w-5 h-5 mr-2" />
                 Print Invoice
-              </button>
+              </button> */}
             </div>
 
             {/* Mobile Navigation Back Button */}
