@@ -499,7 +499,7 @@ const StJohnsInvoiceSystem = () => {
             {/* Preview Card */}
             <div ref={printRef} className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg mb-4 sm:mb-6">
               <div className="text-center mb-4 sm:mb-6">
-                <div className="bg-white  p-4 sm:p-6 rounded-lg mb-4">
+                <div className="bg-white pt-[5px] px-4 pb-4 sm:px-6 rounded-lg mb-4">
                   <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2">
                     <img
                       src={Logo}
