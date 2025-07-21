@@ -511,7 +511,8 @@ const StJohnsInvoiceSystem = () => {
                     </h1>
                   </div>
                   <p className="text-black-100 text-sm ">Bangalore, Karnataka</p>
-                  <p className="text-black-100 text-xs sm:text-sm">Phone: +91 90743 70798 | Email: info@stjohnsHostel.com</p>
+                  <p className="text-black-100 text-xs sm:text-sm">Email: stjohnshostel25@gmail.com</p>
+                  <p className="text-black-100 text-xs sm:text-sm">Phone: +91 90743 70798 | +91 70901 83651</p>
                 </div>
               </div>
 
