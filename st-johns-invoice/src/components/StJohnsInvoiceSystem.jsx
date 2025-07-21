@@ -257,10 +257,10 @@ const StJohnsInvoiceSystem = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white text-green-600 p-4 sm:p-6 lg:p-8">
+        <div className="bg-white  p-4 sm:p-6 lg:p-8">
           <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
-            <Building className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-            <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold">St. Johns Boys Hostel</h1>
+            <Building className="w-6 h-6 text-green-600 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
+            <h1 className="text-xl text-green-600 sm:text-2xl lg:text-4xl font-bold">St. Johns Boys Hostel</h1>
           </div>
           <p className="text-center text-black-100 text-sm sm:text-base lg:text-lg">Professional Invoice Management System</p>
         </div>
