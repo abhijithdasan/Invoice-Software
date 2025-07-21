@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.invoice-top-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.bill-to, .invoice-details {
+  width: 48%;
+}
+
+.invoice-details {
+  text-align: right;
+}
