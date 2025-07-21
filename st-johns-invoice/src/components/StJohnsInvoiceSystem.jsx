@@ -88,191 +88,203 @@ const StJohnsInvoiceSystem = () => {
 
   const printInvoice = () => {
   try {
-    // Check if printRef exists and has content
     if (!printRef.current) {
       console.error('Print reference not found');
       return;
     }
 
-    const printWindow = window.open('', '_blank');
+    const invoiceHTML = printRef.current.innerHTML;
+    const baseHref = document.baseURI || window.location.origin + '/';
     
-    // Check if window opened successfully (could be blocked by popup blocker)
+    // Create and open print window
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
     if (!printWindow) {
-      alert('Please allow popups for this site to enable printing');
+      alert('Popup blocked. Please allow popups for this site.');
       return;
     }
 
-    const invoiceHTML = printRef.current.innerHTML;
+    // Ensure the window has focus
+    printWindow.focus();
 
-    // Get all stylesheets from the current document
-    const stylesheets = Array.from(document.styleSheets);
+    // Get all styles
     let allStyles = '';
+    
+    // Get inline styles
+    const styleTags = document.querySelectorAll('style');
+    styleTags.forEach(tag => {
+      allStyles += tag.innerHTML + '\n';
+    });
 
-    // Extract CSS rules from all stylesheets
-    stylesheets.forEach(stylesheet => {
+    // Get external stylesheets
+    Array.from(document.styleSheets).forEach(sheet => {
       try {
-        if (stylesheet.cssRules) {
-          Array.from(stylesheet.cssRules).forEach(rule => {
+        if (sheet.cssRules) {
+          Array.from(sheet.cssRules).forEach(rule => {
             allStyles += rule.cssText + '\n';
           });
         }
       } catch (e) {
-        // Handle CORS issues with external stylesheets
-        console.warn('Could not access stylesheet:', e);
+        console.warn('Stylesheet load error:', e);
       }
     });
 
-    // Also get inline styles from style tags
-    const styleTags = document.querySelectorAll('style');
-    styleTags.forEach(styleTag => {
-      allStyles += styleTag.innerHTML + '\n';
-    });
-
-    // Complete HTML document with copied styles
-    const printContent = `
+    // Write the HTML content
+    printWindow.document.write(`
       <!DOCTYPE html>
       <html lang="en">
       <head>
+        <base href="${baseHref}">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Invoice</title>
+        <title>Print Invoice</title>
         <style>
           ${allStyles}
-          
-          /* Additional print-specific styles - html2pdf matching */
           @media print {
-            @page {
-              size: A4;
-              margin: 0.5in;
-            }
-            
             body {
-              margin: 0 !important;
-              padding: 10px !important;
-              font-family: inherit !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
               background: white !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
+              font-family: sans-serif;
+              margin: 0;
+              padding: 20px;
             }
-            
-            /* Remove any transforms or scaling */
-            * {
-              transform: none !important;
-              box-sizing: border-box !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
+            img {
+              max-width: 100%;
+              height: auto;
+              display: block;
             }
-            
-            /* Hide elements that shouldn't be printed */
-            .no-print, 
-            button,
-            .btn,
-            [type="button"],
-            [type="submit"],
-            input[type="button"],
-            input[type="submit"] {
+            .no-print {
               display: none !important;
             }
-            
-            /* Preserve original fonts and sizes */
-            body, body * {
-              font-size: inherit !important;
-              line-height: inherit !important;
-              color: inherit !important;
-              background-color: inherit !important;
-            }
-            
-            /* Ensure tables and content maintain structure */
-            table {
-              width: 100% !important;
-              border-collapse: collapse !important;
-              page-break-inside: auto !important;
-            }
-            
-            thead {
-              display: table-header-group !important;
-            }
-            
-            tr {
-              page-break-inside: avoid !important;
-            }
-            
-            /* Maintain margins and padding as designed */
-            .invoice-header,
-            .invoice-body,
-            .invoice-footer {
-              margin: inherit !important;
-              padding: inherit !important;
-            }
-            
-            /* Preserve flex and grid layouts */
-            .flex, .d-flex {
-              display: flex !important;
-            }
-            
-            .grid {
-              display: grid !important;
-            }
-            
-            /* Keep images and logos */
-            img {
-              max-width: 100% !important;
-              height: auto !important;
-            }
-            
-            /* Auto-fit content to page */
-            html {
-              zoom: 0.9;
+          }
+          @media screen {
+            body {
+              font-family: sans-serif;
+              padding: 20px;
+              background: white;
             }
           }
         </style>
       </head>
       <body>
         ${invoiceHTML}
+        <script>
+          let printAttempted = false;
+          
+          function triggerPrint() {
+            if (printAttempted) return;
+            printAttempted = true;
+            
+            // Focus the window again before printing
+            window.focus();
+            
+            // Trigger print
+            setTimeout(() => {
+              window.print();
+              
+              // Handle after print events
+              const handleAfterPrint = () => {
+                setTimeout(() => {
+                  window.close();
+                }, 100);
+              };
+              
+              // Multiple event handlers for better compatibility
+              window.onafterprint = handleAfterPrint;
+              window.addEventListener('afterprint', handleAfterPrint);
+              
+              // Fallback: close after delay if print dialog was cancelled
+              setTimeout(() => {
+                if (!window.closed) {
+                  const shouldClose = confirm('Close this print preview window?');
+                  if (shouldClose) {
+                    window.close();
+                  }
+                }
+              }, 10000); // 10 second fallback
+            }, 500); // Increased delay for better reliability
+          }
+          
+          function waitForImagesAndPrint() {
+            const images = document.querySelectorAll('img');
+            let loadedImages = 0;
+            const totalImages = images.length;
+            
+            if (totalImages === 0) {
+              triggerPrint();
+              return;
+            }
+            
+            const checkAllLoaded = () => {
+              loadedImages++;
+              if (loadedImages >= totalImages) {
+                triggerPrint();
+              }
+            };
+            
+            // Set up image load listeners
+            images.forEach(img => {
+              if (img.complete) {
+                checkAllLoaded();
+              } else {
+                img.addEventListener('load', checkAllLoaded, { once: true });
+                img.addEventListener('error', checkAllLoaded, { once: true });
+              }
+            });
+            
+            // Fallback timeout in case images take too long
+            setTimeout(triggerPrint, 3000);
+          }
+          
+          // Start the process when DOM is ready
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', waitForImagesAndPrint);
+          } else {
+            waitForImagesAndPrint();
+          }
+          
+          // Additional fallback
+          window.addEventListener('load', () => {
+            setTimeout(() => {
+              if (!printAttempted) {
+                triggerPrint();
+              }
+            }, 1000);
+          });
+        </script>
       </body>
       </html>
-    `;
-
-    printWindow.document.write(printContent);
+    `);
+    
     printWindow.document.close();
-
-    // Wait for content to load before printing
-    printWindow.onload = () => {
-      printWindow.focus();
-      printWindow.print();
-      
-      // Optional: Close the window after printing
-      printWindow.onafterprint = () => {
-        printWindow.close();
-      };
-    };
-
+    
   } catch (error) {
-    console.error('Error printing invoice:', error);
-    alert('An error occurred while trying to print the invoice');
+    console.error('Print failed:', error);
+    alert('Error while printing invoice: ' + error.message);
   }
 };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white p-4 sm:p-6 lg:p-8">
-  <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
-    <img
-      src={Logo}
-      alt="Hostel Logo"
-      className="w-20 h-20 sm:w-10 sm:h-10 lg:w-20 lg:h-20 object-contain"
-      // 
-    />
-    <h1 className="text-xl text-green-800 sm:text-2xl lg:text-4xl font-bold">
-      St. Johns Boys Hostel
-    </h1>
-  </div>
-  <p className="text-center text-black text-sm sm:text-base lg:text-lg">
-    Professional Invoice Management System
-  </p>
-</div>
+          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
+            <img
+              src={Logo}
+              alt="Hostel Logo"
+              className="w-20 h-20 sm:w-10 sm:h-10 lg:w-20 lg:h-20 object-contain"
+            />
+            <h1 className="text-xl text-green-800 sm:text-2xl lg:text-4xl font-bold">
+              St. Johns Boys Hostel
+            </h1>
+          </div>
+          <p className="text-center text-black text-sm sm:text-base lg:text-lg">
+            Professional Invoice Management System
+          </p>
+        </div>
 
         {/* Mobile Tab Navigation */}
         <div className="lg:hidden bg-white border-b border-gray-200" data-html2canvas-ignore="true">
@@ -488,9 +500,17 @@ const StJohnsInvoiceSystem = () => {
             <div ref={printRef} className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg mb-4 sm:mb-6">
               <div className="text-center mb-4 sm:mb-6">
                 <div className="bg-white  p-4 sm:p-6 rounded-lg mb-4">
-                
-                  <h3 className="text-lg text-green-800 sm:text-xl lg:text-2xl font-bold">St. Johns Boys Hostel</h3>
-                  <p className="text-black-100 mt-1 sm:mt-2 text-sm sm:text-base">Bangalore, Karnataka</p>
+                  <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2">
+                    <img
+                      src={Logo}
+                      alt="Hostel Logo"
+                      className="w-10 h-10 sm:w-10 sm:h-10 lg:w-20 lg:h-20 object-contain"
+                    />
+                    <h1 className="text-lg text-green-800 sm:text-xl lg:text-2xl font-bold">
+                      St. Johns Boys Hostel
+                    </h1>
+                  </div>
+                  <p className="text-black-100 text-sm ">Bangalore, Karnataka</p>
                   <p className="text-black-100 text-xs sm:text-sm">Phone: +91 90743 70798 | Email: info@stjohnsHostel.com</p>
                 </div>
               </div>
@@ -541,7 +561,7 @@ const StJohnsInvoiceSystem = () => {
               </div>
 
               {invoiceData.notes && (
-                <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 border-l-4 border-yellow-500">
+                <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                   <h4 className="font-semibold text-yellow-800 mb-2">Notes:</h4>
                   <p className="text-sm text-gray-700 break-words">{invoiceData.notes}</p>
                 </div>
@@ -574,13 +594,13 @@ const StJohnsInvoiceSystem = () => {
                 <Download className="w-5 h-5 mr-2" />
                 Download PDF
               </button>
-              {/* <button
+              <button
                 onClick={printInvoice}
                 className="w-full sm:flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all shadow-lg flex items-center justify-center text-base"
               >
                 <Printer className="w-5 h-5 mr-2" />
                 Print Invoice
-              </button> */}
+              </button>
             </div>
 
             {/* Mobile Navigation Back Button */}
