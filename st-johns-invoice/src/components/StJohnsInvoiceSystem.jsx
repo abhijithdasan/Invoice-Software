@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Download, Printer, Plus, Trash2, User, Phone, IndianRupee, Calendar, FileText, CheckCircle, Building, Menu, X } from 'lucide-react';
-
+import Logo from '../images/logo.png';
 const StJohnsInvoiceSystem = () => {
   const [invoiceData, setInvoiceData] = useState({
     studentName: '',
@@ -257,13 +257,22 @@ const StJohnsInvoiceSystem = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white  p-4 sm:p-6 lg:p-8">
-          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
-            <Building className="w-6 h-6 text-green-600 sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
-            <h1 className="text-xl text-green-600 sm:text-2xl lg:text-4xl font-bold">St. Johns Boys Hostel</h1>
-          </div>
-          <p className="text-center text-black-100 text-sm sm:text-base lg:text-lg">Professional Invoice Management System</p>
-        </div>
+        <div className="bg-white p-4 sm:p-6 lg:p-8">
+  <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-2 sm:mb-4">
+    <img
+      src={Logo}
+      alt="Hostel Logo"
+      className="w-20 h-20 sm:w-10 sm:h-10 lg:w-20 lg:h-20 object-contain"
+      // 
+    />
+    <h1 className="text-xl text-green-800 sm:text-2xl lg:text-4xl font-bold">
+      St. Johns Boys Hostel
+    </h1>
+  </div>
+  <p className="text-center text-black text-sm sm:text-base lg:text-lg">
+    Professional Invoice Management System
+  </p>
+</div>
 
         {/* Mobile Tab Navigation */}
         <div className="lg:hidden bg-white border-b border-gray-200" data-html2canvas-ignore="true">
@@ -479,7 +488,8 @@ const StJohnsInvoiceSystem = () => {
             <div ref={printRef} className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-lg mb-4 sm:mb-6">
               <div className="text-center mb-4 sm:mb-6">
                 <div className="bg-white  p-4 sm:p-6 rounded-lg mb-4">
-                  <h3 className="text-lg text-green-600 sm:text-xl lg:text-2xl font-bold">St. Johns Boys Hostel</h3>
+                
+                  <h3 className="text-lg text-green-800 sm:text-xl lg:text-2xl font-bold">St. Johns Boys Hostel</h3>
                   <p className="text-black-100 mt-1 sm:mt-2 text-sm sm:text-base">Bangalore, Karnataka</p>
                   <p className="text-black-100 text-xs sm:text-sm">Phone: +91 90743 70798 | Email: info@stjohnsHostel.com</p>
                 </div>
