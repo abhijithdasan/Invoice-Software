@@ -10,11 +10,11 @@ const StJohnsInvoiceSystem = () => {
     invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
     date: new Date().toISOString().split('T')[0],
     items: [
-      { description: 'Monthly Rent', amount: 0 },
-      { description: 'Mess Charges', amount: 0 }
+      { description: 'Caution Deposit', amount: 0 },
+      { description: 'Hostel Fee', amount: 0 }
     ],
     paymentMethod: 'Cash',
-    notes: ''
+    notes: '' 
   });
 
   const [activeTab, setActiveTab] = useState('form');
@@ -467,7 +467,7 @@ const StJohnsInvoiceSystem = () => {
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+              <label className="block text-sm font-medium text-gray-700">Additional Notes</label>
               <textarea
                 value={invoiceData.notes}
                 onChange={(e) => handleInputChange('notes', e.target.value)}
@@ -562,8 +562,8 @@ const StJohnsInvoiceSystem = () => {
               </div>
 
               {invoiceData.notes && (
-                <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
-                  <h4 className="font-semibold text-yellow-800 mb-2">Notes:</h4>
+                <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg sm:mb-6">
+                  <h4 className="font-semibold text-yellow-800">Notes:</h4>
                   <p className="text-sm text-gray-700 break-words">{invoiceData.notes}</p>
                 </div>
               )}
